@@ -13,6 +13,15 @@ using namespace std;;
 #define ORANGE 	6
 
 
+
+
+int MAX(int a,int b)
+{
+	if( a < b )
+		return b;
+	return a;
+}
+
 const int SIZE = 3;
 
 
@@ -484,9 +493,9 @@ void invariant(block cube[SIZE][SIZE][SIZE])
 				colors[ t.back  ] ++;
 			}
 
-	for(int i=0; i<7; i++)
-		printf("%d ",colors[i] );
-	cout << endl;
+	//for(int i=0; i<7; i++)
+	//	printf("%d ",colors[i] );
+	//cout << endl;
 	assert( colors[1] == 9 and colors[2] == 9 and colors[3] == 9 and colors[4] == 9 and colors[5] == 9 and colors[6] == 9 );
 			
 
@@ -494,8 +503,110 @@ void invariant(block cube[SIZE][SIZE][SIZE])
 
 }
 
+bool compareBlock(block a, block b )
+{
+	return a.left  == b.left and a.right == b.right and a.top == b.top and a.bottom == b.bottom and a.front == b.front and a.back == b.back and
+			a.pos_i == b.pos_i and a.pos_j == b.pos_j and a.pos_k == b.pos_k;
 
 
+}
+
+int HeuristicFunction(block cube[SIZE][SIZE][SIZE] )
+{
+
+	block temp_cube[3][3][3];
+	memset(temp_cube,0,sizeof(temp_cube));
+
+	initCube(temp_cube);
+
+
+	int count = 0;
+
+
+	for( int i =0; i< 3; i++)
+		for(int j=0; j<3; j++)
+			for(int k =0; k<3; k++)
+				count += ( compareBlock(temp_cube[i][j][k], cube[i][j][k] ));
+
+
+	return count;
+
+}
+
+
+
+
+void copyCube(block target[3][3][3] , block source[3][3][3] )
+{
+	for(int i =0 ; i< 3; i++)	
+		for(int j =0; j<3; j++)
+			for(int k=0; k<3; k++)
+					target[i][j][k] = source[i][j][k];
+
+}
+
+
+void nextMove(block mycube[3][3][3])
+{
+	// see, there are four possible moves, and I could just do some combinations of moves
+
+	
+	int heuristic_table[12][12][12][12][12];
+	memset(heuristic_table,0,sizeof(heuristic_table));
+	int quick_table[12] ;
+	memset(quick_table,0,sizeof(quick_table));
+	
+	for(int i=0; i<12; i++)
+		for(int j =i+2; j<12; j++)
+			for(int k =j+2; k<12; k++)
+				for(int l=k+2; l<12; l++)
+					for(int m=l+2; m<12; m++)
+					{						
+						block temp_cube[SIZE][SIZE][SIZE];
+						memset(temp_cube,0,sizeof(temp_cube));
+						
+						copyCube(temp_cube,mycube);
+						
+						
+
+						functions[i](temp_cube);
+						functions[j](temp_cube);
+						functions[k](temp_cube);
+						functions[l](temp_cube);
+						functions[m](temp_cube);		
+
+
+						quick_table[i] = (MAX(quick_table[i], heuristic_table[i][j][k][l][m] = HeuristicFunction(temp_cube) ));
+					
+					}
+
+	int max_index = 0;
+	
+
+	for(int i =0; i<12; i++)
+	{
+		if( quick_table[max_index] < quick_table[i]  )
+			max_index= i  ;
+	}
+
+	cout <<"making move "<<max_index << endl;
+	functions[max_index](mycube);
+
+	invariant(mycube);
+
+}
+
+
+void randomizeCube(block cube[3][3][3],int iterations)
+{
+
+	for(int i =0; i<iterations; i++)
+	{
+		functions[rand()%12](cube);
+		cout << HeuristicFunction(cube)<<endl;
+	}
+
+}
 
 
 int main()
@@ -507,18 +618,18 @@ int main()
 
 	initCube(cube);
 
-
-	for(int i = 0; i<12; i++)
+	randomizeCube(cube,100);
+	while(HeuristicFunction(cube) !=27)
 	{
-		printf("fucntion : %d\n",i);
-		functions[i]( cube );
-		invariant(cube);
+		//system(" ;clear");
+		nextMove(cube);
+		cout << "hf : "<< HeuristicFunction(cube) <<endl;
 		displayCube(cube);
-	}		
+		system("sleep 1");
+	}
 
-
-	
+	cout << "hf :"<<HeuristicFunction(cube) << endl;
+	displayCube(cube);	
 
 	return 0;
 }
-
