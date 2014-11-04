@@ -1,4 +1,4 @@
 rubikOpenGL
 ===========
 
-Rubik cube C++ implemetation with OpenGL functionality written from scratch
+Rubik cube C++ implementation with OpenGL functionality written from scratch. Currently not complete.
