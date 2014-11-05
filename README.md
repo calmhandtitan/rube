@@ -10,3 +10,5 @@ gcc rube.cpp -lglut -lGLU -lGL
 use left,right,down,up arrow keys for changing the view of cube
 
 use a,s,d,f,g,r,t,y,u,i,o,p for various rotations of faces of cube
+
+![alt tag](http://snag.gy/RuE9j.jpg)
