@@ -1,11 +1,11 @@
 rube
 ====
 
-Rubiks cube implementation using opengl. all of the rubik's code written from scratch so might be buggy in some scenarios. Modified a opengl for drawing cube to make the complete 3X3X3 rubik cube. 
+Rubiks cube implementation using opengl. all of the rubik's code written from scratch so might be buggy in some scenarios. Modified a opengl code for drawing cube to make the complete 3X3X3 rubik cube. 
 
 compile with the opengl way:
 
-gcc rube.cpp -lglut -lGLU -lGL 
+> gcc rube.cpp -lglut -lGLU -lGL 
 
 use left,right,down,up arrow keys for changing the view of cube
 
