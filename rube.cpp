@@ -417,7 +417,7 @@ void rotate_bottom_clockwise(  )
 
 
 static int useRGB = 1;
-static int useLighting = 1;
+static int useLighting = 0;
 static int useDB = 1;
 
 static int moving = 1;
@@ -501,7 +501,13 @@ static float cube_normals[6][4] =
 void initCube( )
 {
 
-	
+	for(int i = 0 ; i< SIZE;i++)
+		for(int j = 0 ;j<SIZE; j++)
+			for(int  k =0; k<SIZE; k++)
+			{
+				block & t = cube[i][j][k];
+				t.front = t.back = t.top = t.bottom = t.left = t.right = BLACK;
+			}	
 	
 
 	for( int i = 0; i<SIZE; i++)
@@ -628,13 +634,14 @@ display(void)
    glRotatef ( whole_cube_angular_pos[1], 0, 1 , 0 );
 //   glRotatef ( whole_cube_angular_pos[2], 0, 0 , 1 );
 	
-
+  
 
   for(int i = 0; i<3; i++)
 	for(int j =0; j<3;j++)
 		for(int k =0; k<3; k++)
 	{
 	 glPushMatrix();
+		
 	block & t =  cube[i][j][k];
  	glTranslatef(0.9 -0.3*t.pos_i, 0.3*t.pos_j, 0.3*t.pos_k);
   	glScalef(0.1, 0.1, 0.1);
@@ -763,10 +770,11 @@ main(int argc, char **argv)
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glTranslatef(0.0, 0.0, -2.0);
+  glTranslatef(0.0, 0.0, -2.5);
 
   glEnable(GL_DEPTH_TEST);
 
+   /*
   if (useLighting) {
     glEnable(GL_LIGHTING);
   }
@@ -775,7 +783,7 @@ main(int argc, char **argv)
   glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiff);
   glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
-
+  */
 
 
   glClearColor(0.0, 0.0, 0.0, 1);
