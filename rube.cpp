@@ -602,7 +602,7 @@ display(void)
 
    glRotatef ( whole_cube_angular_pos[0], 1, 0 , 0 );
    glRotatef ( whole_cube_angular_pos[1], 0, 1 , 0 );
-//   glRotatef ( whole_cube_angular_pos[2], 0, 0 , 1 );
+   glRotatef ( whole_cube_angular_pos[2], 0, 0 , 1 );
 	
   
 
@@ -619,11 +619,10 @@ display(void)
   	glPopMatrix();
 	}
 
-  glRotatef ( -whole_cube_angular_pos[0], 1, 0 , 0 );
-  glRotatef ( -whole_cube_angular_pos[1],0,1,0 );
-//  glRotatef ( -whole_cube_angular_pos[2],0,0,1);
-
-    glutSwapBuffers();
+  for(int i= 0 ; i <3; i++)
+	whole_cube_angular_pos[i] = 0;
+   
+  glutSwapBuffers();
 }
 
 
@@ -632,16 +631,16 @@ void SpecialInput(int key, int x, int y)
 switch(key)
 {
 case GLUT_KEY_UP:
-	whole_cube_angular_pos[0] += 1;
+	whole_cube_angular_pos[0] += 2;
 break;
 case GLUT_KEY_DOWN:
-	whole_cube_angular_pos[0] -= 1;
+	whole_cube_angular_pos[0] -= 2;
 break;
 case GLUT_KEY_LEFT:
-	whole_cube_angular_pos[1] -= 1;
+	whole_cube_angular_pos[1] -= 2;
 break;
 case GLUT_KEY_RIGHT:
-	whole_cube_angular_pos[1] +=1;
+	whole_cube_angular_pos[1] +=2;
 break;
 
 
