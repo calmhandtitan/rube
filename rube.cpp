@@ -636,7 +636,7 @@ display(void)
 	{
 	 glPushMatrix();
 	block & t =  cube[i][j][k];
- 	glTranslatef(0.6 -0.2*t.pos_i, 0.2*t.pos_j, 0.2*t.pos_k);
+ 	glTranslatef(0.9 -0.3*t.pos_i, 0.3*t.pos_j, 0.3*t.pos_k);
   	glScalef(0.1, 0.1, 0.1);
   	drawCube(cube[i][j][k]);        /* draw cube */
   	glPopMatrix();
