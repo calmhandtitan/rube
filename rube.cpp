@@ -27,7 +27,7 @@ typedef struct {
 	int top,bottom,left,right,front,back;
 } block;
 
-#define SIZE 3
+#define SIZE 3 // will only work for size three, since there are some dirty work I did in between
 static   block cube[SIZE][SIZE][SIZE];
 
 void rotate_left_clockwise( );
@@ -416,10 +416,6 @@ void rotate_bottom_clockwise(  )
 
 
 
-static int useRGB = 1;
-static int useLighting = 0;
-static int useDB = 1;
-
 static int moving = 1;
 
 #define GREY	0
@@ -434,18 +430,6 @@ static int moving = 1;
 
 
 
-static float lightPos[4] =
-{2.0, 4.0, 2.0, 1.0};
-#if 0
-static float lightDir[4] =
-{-2.0, -4.0, -2.0, 1.0};
-#endif
-static float lightAmb[4] =
-{0.2, 0.2, 0.2, 1.0};
-static float lightDiff[4] =
-{0.8, 0.8, 0.8, 1.0};
-static float lightSpec[4] =
-{0.4, 0.4, 0.4, 1.0};
 
 
 static float cube_vertexes[6][4][4] =
@@ -538,21 +522,7 @@ void initCube( )
 static void
 setColor(int c)
 {
-  if (useLighting) {
-    if (useRGB) {
-      glMaterialfv(GL_FRONT_AND_BACK,
-        GL_AMBIENT_AND_DIFFUSE, &materialColor[c][0]);
-    } else {
-      glMaterialfv(GL_FRONT_AND_BACK,
-        GL_COLOR_INDEXES, &materialColor[c][0]);
-    }
-  } else {
-    if (useRGB) {
       glColor4fv(&materialColor[c][0]);
-    } else {
-      glIndexf(materialColor[c][1]);
-    }
-  }
 }
 
 
@@ -632,67 +602,45 @@ display(void)
 
    glRotatef ( whole_cube_angular_pos[0], 1, 0 , 0 );
    glRotatef ( whole_cube_angular_pos[1], 0, 1 , 0 );
-//   glRotatef ( whole_cube_angular_pos[2], 0, 0 , 1 );
+   glRotatef ( whole_cube_angular_pos[2], 0, 0 , 1 );
 	
   
 
-  for(int i = 0; i<3; i++)
-	for(int j =0; j<3;j++)
-		for(int k =0; k<3; k++)
+  for(int i = 0; i<SIZE; i++)
+	for(int j =0; j<SIZE;j++)
+		for(int k =0; k<SIZE; k++)
 	{
 	 glPushMatrix();
 		
 	block & t =  cube[i][j][k];
- 	glTranslatef(0.9 -0.3*t.pos_i, 0.3*t.pos_j, 0.3*t.pos_k);
+ 	glTranslatef(0.3*SIZE -0.3*t.pos_i, 0.3*t.pos_j, 0.3*t.pos_k);
   	glScalef(0.1, 0.1, 0.1);
   	drawCube(cube[i][j][k]);        /* draw cube */
   	glPopMatrix();
 	}
 
-  glRotatef ( -whole_cube_angular_pos[0], 1, 0 , 0 );
-  glRotatef ( -whole_cube_angular_pos[1],0,1,0 );
-//  glRotatef ( -whole_cube_angular_pos[2],0,0,1);
-
-  if (useDB) {
-    glutSwapBuffers();
-  } else {
-    glFlush();
-  }
+  for(int i= 0 ; i <3; i++)
+	whole_cube_angular_pos[i] = 0;
+   
+  glutSwapBuffers();
 }
 
-void
-menu_select(int mode)
-{
-  switch (mode) {
-  case 1:
-    moving = 1;
-    glutIdleFunc(idle);
-    break;
-  case 2:
-    moving = 0;
-    glutIdleFunc(NULL);
-    break;
-  case 5:
-    exit(0);
-    break;
-  }
-}
 
 void SpecialInput(int key, int x, int y)
 {
 switch(key)
 {
 case GLUT_KEY_UP:
-	whole_cube_angular_pos[0] += 1;
+	whole_cube_angular_pos[0] += 2;
 break;
 case GLUT_KEY_DOWN:
-	whole_cube_angular_pos[0] -= 1;
+	whole_cube_angular_pos[0] -= 2;
 break;
 case GLUT_KEY_LEFT:
-	whole_cube_angular_pos[1] -= 1;
+	whole_cube_angular_pos[1] -= 2;
 break;
 case GLUT_KEY_RIGHT:
-	whole_cube_angular_pos[1] +=1;
+	whole_cube_angular_pos[1] +=2;
 break;
 
 
@@ -720,7 +668,6 @@ main(int argc, char **argv)
   int width = 350, height = 350;
   int i;
   char *name;
-  int fog_menu;
 
 
 
@@ -730,31 +677,9 @@ main(int argc, char **argv)
 
   glutInitWindowSize(width, height);
   glutInit(&argc, argv);
-  /* process commmand line args */
-  for (i = 1; i < argc; ++i) {
-    if (!strcmp("-c", argv[i])) {
-      useRGB = !useRGB;
-    } else if (!strcmp("-l", argv[i])) {
-      useLighting = !useLighting;
-    } else if (!strcmp("-db", argv[i])) {
-      useDB = !useDB;
-    }
-  }
 
-  /* choose visual */
-  if (useRGB) {
-    if (useDB) {
-      glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    } else {
-      glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    }
-  } else {
-    if (useDB) {
-      glutInitDisplayMode(GLUT_DOUBLE | GLUT_INDEX | GLUT_DEPTH);
-    } else {
-      glutInitDisplayMode(GLUT_SINGLE | GLUT_INDEX | GLUT_DEPTH);
-    }
-  }
+  
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
   glutCreateWindow("my rubik -- lokendra");
 
@@ -774,22 +699,11 @@ main(int argc, char **argv)
 
   glEnable(GL_DEPTH_TEST);
 
-   /*
-  if (useLighting) {
-    glEnable(GL_LIGHTING);
-  }
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiff);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
-  */
-
 
   glClearColor(0.0, 0.0, 0.0, 1);
   glClearIndex(0);
   glClearDepth(1);
 
   glutMainLoop();
-  return 0;             /* ANSI C requires main to return int. */
+  return 0;             
 }
